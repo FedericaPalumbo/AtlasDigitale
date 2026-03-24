@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mappa Digitale — Continenti Hybrid</title>
+
+  <!-- Stili -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/componenti.css">
+
+  <style>
+    @keyframes spin { to { transform: rotate(360deg); } }
+    #loading-msg {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 14px;
+      font-family: 'DM Mono', monospace; font-size: 0.65rem;
+      letter-spacing: 0.18em; color: #b0a090;
+      pointer-events: none; z-index: 50;
+      text-transform: uppercase;
+    }
+    #loading-msg svg { animation: spin 1.2s linear infinite; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Atlas Digitale</h1>
+    <span>Proiezione Equirettangolare · HD on-demand</span>
+    <div class="coords" id="coord-display">φ 00°00′N · λ 00°00′E</div>
+  </header>
+
+  <div id="map-container">
+    <svg id="map-svg">
+      <defs>
+        <clipPath id="map-clip">
+          <rect id="map-clip-rect" x="0" y="0" width="100%" height="100%"/>
+        </clipPath>
+      </defs>
+      <g id="map-clip-group" clip-path="url(#map-clip)"></g>
+    </svg>
+
+    <!-- Loading indicator -->
+    <div id="loading-msg">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+        <circle cx="14" cy="14" r="11" stroke="#d8cfc4" stroke-width="2.5"/>
+        <path d="M14 3 A11 11 0 0 1 25 14" stroke="#c07860" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+      Caricamento mappa…
+    </div>
+
+    <div id="tooltip"></div>
+
+    <!-- Legenda -->
+    <div class="legend" id="legend-panel">
+      <div class="legend-item" data-continent="North America"><div class="swatch" style="background:#b8d4c0"></div>Nord America</div>
+      <div class="legend-item" data-continent="South America"><div class="swatch" style="background:#c4dab4"></div>Sud America</div>
+      <div class="legend-item" data-continent="Africa"><div class="swatch" style="background:#f2c4a0"></div>Africa</div>
+      <div class="legend-item" data-continent="Europe"><div class="swatch" style="background:#c4b8d8"></div>Europa</div>
+      <div class="legend-item" data-continent="Asia"><div class="swatch" style="background:#f4d0c4"></div>Asia</div>
+      <div class="legend-item" data-continent="Oceania"><div class="swatch" style="background:#f8e0a8"></div>Oceania</div>
+      <div class="legend-item" data-continent="Antarctica"><div class="swatch" style="background:#c8d8e8"></div>Antartide</div>
+    </div>
+
+    <!-- Minimap -->
+    <div id="minimap-container" style="display:none;">
+      <div class="minimap-label">Vista globale</div>
+      <svg id="minimap-svg" width="200" height="105"
+           style="display:block;border-radius:2px;overflow:hidden;"></svg>
+    </div>
+
+    <!-- Controlli zoom -->
+    <div class="controls">
+      <button class="ctrl-btn" id="zoom-in"    title="Zoom in">+</button>
+      <button class="ctrl-btn" id="zoom-out"   title="Zoom out">−</button>
+      <button class="ctrl-btn" id="reset-view" title="Reset">⌂</button>
+    </div>
+
+    <!-- Riquadri territori oltreoceano -->
+    <div id="overseas-panels" style="display:none;"></div>
+
+    <!-- Pannello informazioni continente selezionato -->
+    <div id="selected-info"></div>
+  </div>
+
+  <footer>
+    <span>Vista globale rapida · HD on-demand per continente</span>
+    <span class="sep">·</span>
+    <span>Clicca su un continente per i dettagli</span>
+    <span class="sep">·</span>
+    <span>Trascina per spostarti</span>
+    <span class="sep">·</span>
+    <span>Scroll per zoom</span>
+  </footer>
+
+  <!-- Libreria D3 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+
+  <!-- Dati e modelli -->
+  <script src="classi/ContinenteData.js"></script>
+  <script src="utils/helpers.js"></script>
+
+  <!-- Controllers -->
+  <script src="controllers/controllerMappa.js"></script>
+  <script src="controllers/controllerUI.js"></script>
+  <script src="controllers/controllerContinenti.js"></script>
+
+  <!-- Bootstrap -->
+  <script>
+    initMappa();
+    initZoomControls();
+    caricaContinenti();
+    controllerUI.initLegenda();
+  </script>
+
+</body>
+</html>
